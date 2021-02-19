@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Claudia Vitolo" />
+
+<meta name="date" content="2021-02-18" />
+
+<title>An introduction to the caliver package</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">An introduction to the caliver package</h1>
+<h4 class="author">Claudia Vitolo</h4>
+<h4 class="date">2021-02-18</h4>
+
+
+
+<p><strong><em>NOTE: This vignette is an updated and extended version of <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, since the publication of this PlosONE paper some functionalities have changed or have been deprecated.</em></strong></p>
+<div id="abstract" class="section level1">
+<h1>Abstract</h1>
+<p>The name <code>caliver</code> stands for <strong>CALI</strong>bration and <strong>VER</strong>ification of (forest fire) gridded model outputs. This is a package developed for the R programming language and available under an APACHE-2 license from a public repository.</p>
+<p>The caliver package was initially designed for the post-processing, calibration and validation/verification of Forest Fire Danger Forecasting models but as development progressed, it became clear that it could have a much wider applicability. The goal of this vignette is to describe the functionalities of the package, examples are given with regards to outputs of the following forest fire models: GEFF and RISICO.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>Forecasting wildfires is a complex task, theoretically challenging and computationally demanding. From a theoretical point of view, fires are difficult to predict as they depend on a stochastic (unpredictable) component: the ignition. The trigger can be natural in origin like lightning and self-combustion. But it can also be due to human behavior as intentional act of arson or unintentional act of negligence. Quite commonly human-caused ignition is performed to encourage regeneration and biodiversity in the forest ecosystem or replace forest vegetation with agricultural crops <span class="citation">(Vélez 2002, @McFarlane_etal_2002)</span>.</p>
+<p>Once a fire is ignited, its spread, sustainability, and difficulty of control is almost exclusively determined by weather conditions <span class="citation">(Flannigan et al. 2009)</span>. Flames tend to rage out of control if certain soil and atmospheric conditions are met. As the ignition is casual and very difficult to predict, fire prediction systems, used in forest management, are design to highlight these favorable weather conditions which would allow sustained fire activity and not actual fire activities. On these premises is based one of the most widespread fire danger rating system, the Canadian forest service’s Fire Weather Index (FWI) <span class="citation">(Van Wagner and others 1974, 1333:@van1987development)</span> which is selected here to showcase the capability of the proposed package.</p>
+<p>The FWI is a measure of fire potential and is expressed as a numeric rating. Rating rises as fire weather becomes more severe. By construction, the relationship between the FWI numerical values and the fuel status, such as the humidity content retained in the live or dead vegetation, is weak. This implies that the same FWI values can correspond to different danger levels depending on the ecosystem. To become a meaningful tool in fire management, the FWI requires the definition of danger levels that should be site specific (we call this post-processing task ‘calibration’ hereafter). Indeed the warning levels suggested for the original FWI were derived to describe fires in a standard jack pine stand, typical of the Canadian forests. Therefore the applicability of the FWI to other parts of the planet, with vegetation characteristics dissimilar from those of the Boreal forests, requires the user to understand the fire occurrence pattern in relation to the site specific conditions. Moreover, before transferring a fire danger system from one area to another, an extensive validation/verification (the terms validation and verification are used as synonyms in this work) against forecasted and observed fire events is required to build operational confidence. In practical terms, the calibration task implies the analysis of the soil and weather conditions as synthesized by the FWI for a long period in the past, while the verification consists of the analysis of the performance of the system and danger levels applied to observed events.</p>
+<p>From a computational point of view tailoring fire danger levels to a given area and validating the performances of an early warning system is a demanding task as it requires handling large datasets. The typical user of fire forecasting systems might not necessarily have access to powerful supercomputers or large data storages. There is a need, therefore, to design and implement post-processing algorithms in such a way that processing time and memory resources are kept to the minimum while relying on accessible hardware.</p>
+<p>In the light of these requirements, we have developed an open-source tool called caliver that contains reproducible algorithms for the calibration and verification of the FWI danger levels. This is developed in the R statistical language <span class="citation">(RCore 2016)</span>, it is available from a public repository and distributed under an open license.</p>
+<p>The calibration and verification methodologies implemented in caliver rely on the availability of long term datasets of predicted and observed fire events. In the present work we test the algorithms using the FWI predictions that the European Centre for Medium-range Weather Forecasts (ECMWF) provides to the European Forest Fire Information System (EFFIS). The modeling component of EFFIS is referred to as the Global ECMWF Fire Forecast system (GEFF, <span class="citation">(Di Giuseppe et al. 2016)</span>). Observed fires are provided by the the Global Fire Assimilation System, which is part of the Copernicus Atmospheric Management Service. Both datasets are publicly available under open licenses.</p>
+<p>In the following sections we present the caliver R package, illustrate the main functionalities and show the results of our experiments focused on calculating and validating fire danger thresholds for various areas in Europe. Europe is taken as an example study area but the methods are applicable worldwide. This work stems from the user-driven <a href="https://www.copernicus.eu/en">Copernicus EU Programme</a> which aims at developing freely and openly accessible information services based on satellite Earth Observation and in situ data. We believe that developing transparent and reproducible analysis workflows, even more if implemented within open-source initiatives is a necessary step towards the implementation of reliable modelling tools. This is because reproducible workflows aim to streamline the processing tasks as they present ready-made solutions to efficiently manipulate complex and heterogeneous datasets. Also, opening the code to the scrutiny of other experts increases the chances to implement more robust solutions and avoids duplication of efforts.</p>
+</div>
+<div id="package-installation-and-dependencies" class="section level1">
+<h1>Package installation and dependencies</h1>
+<p>The <code>caliver</code> package is implemented in the R statistical language. Here we describe version 1.7.0, the latest stable release at the time of this writing. The package does not require compilation but depends on the following external libraries: the Geospatial Data Abstraction Library <span class="citation">(Warmerdam 2008)</span>, a translator library for raster and vector geospatial data formats, and the NetCDF4 library <span class="citation">(Rew and Davis 1990)</span>. A Dockefile is provided with the source code and docker image (ecmwf/caliver) is available from docker hub.</p>
+<p>The <code>caliver</code> package is available on CRAN, therefore once all the dependencies are available, the package can be installed and loaded as follows:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">install.packages</span>(<span class="st">&quot;caliver&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="kw">library</span>(<span class="st">&quot;caliver&quot;</span>)</span></code></pre></div>
+<p>Please note that in the code snippets, we mention functions belonging to packages other than caliver and base, using the convention <code>package_name::function_name</code>.</p>
+<div id="source-code-availability" class="section level2">
+<h2>Source code availability</h2>
+<p>Our work stands for the highest standards of scientific reproducibility from the computational point of view <span class="citation">(Añel 2011, @anel2017comment)</span>. Hence, caliver’s source code is hosted on a public repository, maintained using the git version control system and distributed under an open license: APACHE-2. Users can suggest changes and report bugs using the dedicated <a href="https://github.com/ecmwf/caliver/issues">issue tracking system</a>.</p>
+</div>
+<div id="continuous-integration-and-unit-tests" class="section level2">
+<h2>Continuous integration and unit tests</h2>
+<p>In order to have a reliable development process, system dependencies, installation and basic functionalities are tested using GitHub Actions for continuous integration on windows and unix-based systems. Unit tests for the main functions are developed using the testthat framework <span class="citation">(Wickham 2011)</span>. Software metrics, in terms of code coverage status, are tracked using the <a href="https://about.codecov.io/">codecov platform</a>. The current release has a code coverage of 95%.</p>
+</div>
+</div>
+<div id="datasets-for-testing" class="section level1">
+<h1>Datasets for testing</h1>
+<p>In this work, the functionalities implemented in the caliver package are tested using the data products from the Global ECMWF Fire Forecast (GEFF) system as well as external data sources (see below).</p>
+<div id="get-data-from-the-fourth-generation-global-fire-emissions-database-gfed4" class="section level2">
+<h2>Get data from the fourth-generation Global Fire Emissions Database (GFED4)</h2>
+<div id="burned-areas-deprecated" class="section level3">
+<h3>Burned areas <em>deprecated</em></h3>
+<p>Observed burned areas around the world are collected by the 4th generation Global Fire Emissions Database <span class="citation">(Giglio, Randerson, and Werf 2013)</span> in hdf format. This information is very important as it represents the ground truth for fire models, it is needed to make comparisons with reanalysis and forecast models and estimate their reliability. In <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span>, the function <code>get_gfed4()</code> was used to retrieve observed burned areas from GFED4. Over time the service has changed and this function has proven to be difficult to maintain.</p>
+<p><strong>In the current version of <code>caliver</code>, the funcionalities to retrieve and manipulate GFED4 burned areas have been deprecated (along with some utility functions). Please, download daily burned area maps for 2003-01-01 to 2015-12-31 manually from <a href="https://www.globalfiredata.org/data.html" class="uri">https://www.globalfiredata.org/data.html</a>.</strong></p>
+</div>
+</div>
+<div id="areas-of-interest" class="section level2">
+<h2>Areas of interest</h2>
+<p>For the purpose of this vignette, we will demostrate the <code>caliver</code> functionalities on specific areas: Europe and Italy.</p>
+<div id="basis-regions" class="section level3">
+<h3>Basis regions</h3>
+<p>GFED4 also provides, as ancillary data, a map of 14 basis regions used to evaluate regional annual emission estimates. Within the caliver package, a cached version of this map (called GFED4_BasisRegions) remains available in the ‘inst/extdata’ folder. This map can be retrieved as SpatialPolygonsDataFrame (a spatial class defined in the <code>sp</code> package) as follows.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">library</span>(<span class="st">&quot;sp&quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a></span>
+<span id="cb3-3"><a href="#cb3-3"></a><span class="co"># Get all the GFED4 basis regions</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>BasisRegions &lt;-<span class="st"> </span><span class="kw">readRDS</span>(<span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;GFED4_BasisRegions.rds&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5"></a>                                    <span class="dt">package =</span> <span class="st">&quot;caliver&quot;</span>))</span>
+<span id="cb3-6"><a href="#cb3-6"></a><span class="kw">plot</span>(BasisRegions)</span></code></pre></div>
+<p>Europe can be subsetted from GFED4 basis regions and plotted as follows:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>Europe &lt;-<span class="st"> </span>BasisRegions[BasisRegions<span class="op">$</span>Region <span class="op">==</span><span class="st"> &quot;EURO&quot;</span>,]</span>
+<span id="cb4-2"><a href="#cb4-2"></a><span class="kw">plot</span>(Europe)</span></code></pre></div>
+</div>
+<div id="administrative-boundaries" class="section level3">
+<h3>Administrative boundaries</h3>
+<p>Countries administrative boundaries can be obtained from the <a href="https://gadm.org/">GADM</a> dataset using the function <code>getdata()</code> from the <code>raster</code> package. As an example, below we show how to obtain Italian administrative boundaries.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a><span class="kw">library</span>(<span class="st">&quot;raster&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="co"># Italy</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>Italy &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">getData</span>(<span class="dt">name =</span> <span class="st">&quot;GADM&quot;</span>, <span class="dt">country =</span> <span class="st">&quot;Italy&quot;</span>, <span class="dt">level =</span> <span class="dv">0</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="the-effis-datasets-geff-reanalysis-and-geff-realtime" class="section level2">
+<h2>The EFFIS datasets: GEFF-reanalysis and GEFF-realtime</h2>
+<p>In the last three years fire danger forecasts have been developed at ECMWF as a part of the Copernicus Emergency Management Services under the guidance of the Joint Research Centre (JRC). A subset of GEFF data is feeding the <a href="https://effis.jrc.ec.europa.eu/">EFFIS</a> and <a href="https://gwis.jrc.ec.europa.eu/">GWIS</a> web portals; operational platforms to access timely information for fire danger at European and Global scale, respectively. 38 local and national authorities across Europe are part of the EFFIS network and have been relying on the GEFF outputs for an early identification of regions which might experience fire events due to the establishment of persistent drought conditions.</p>
+<p>Two datasets are available: the GEFF-reanalysis and the GEFF-realtime. GEFF-reanalysis provides historical records of global fire danger conditions from 1980 to date. The historic record is not static but it is updated regularly following the availability of the atmospheric reanalysis datasets. Reanalysis datasets are used to define warning levels on the base of past events, therefore levels derived from them should not be considered static as changes in climatic conditions can alter them. There are currently 2 GEFF-reanalysis datasets, the first one (used mainly for educational purposes) is based on the atmospheric reanalysis dataset ERA-Interim <span class="citation">(Dee et al. 2011)</span>. The second dataset is based on the most recent atmospheric reanalysis ERA5 <span class="citation">(Hersbach et al. 2020)</span>.</p>
+<p>GEFF-realtime provides real time deterministic high resolution and probabilistic fire danger forecasts up to 10 days ahead using weather forcings from the latest model cycle of the ECMWF weather forecast system. The real-time dataset is updated every day with a new set of forecasts. This dataset is used for operational monitoring of danger conditions. Real-time data can be obtain making a data request to the <a href="https://effis.jrc.ec.europa.eu/apps/data.request.form/">JRC</a>.</p>
+<p>In this vignette, the Fire Weather Index (from the homonymous Canadian system) ERA-Interim based reanalysis dataset is used to asses fire danger. This dataset has daily temporal resolution, global coverage (0.7 degrees, ~80 Km, with longitudes ranging between -180 to +180 in geographic coordinate systems) and spans from 1980-01-01 to 2018-12-31. It was computed by the European Centre for Medium-range Weather Forecast (ECMWF) and made available on <a href="https://doi.org/10.5281/zenodo.1065400">Zenodo</a>, for more details see <span class="citation">(Vitolo et al. 2019)</span>. Newer and more detailed fire danger reanalysis data are available from the <a href="https://cds.climate.copernicus.eu/cdsapp#!/dataset/cems-fire-historical?tab=overview">Copernicus Climate Data Store (CDS)</a>, for more details see <span class="citation">(Vitolo et al. 2020)</span>.</p>
+<p>We assume the ERA-Interim based GEFF-reanalysis data have already been downloaded from Zenodo and locally available.</p>
+<p>Data are aggregated into one NetCDF file and can be loaded as RasterBrick.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Assuming the FWI reanalysis (GEFF reanalysis v3.0, 7.5GB) dataset is downloaded</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a>fwi &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">brick</span>(<span class="st">&quot;~/repos/caliver_extras/data/fwi.nc&quot;</span>)</span></code></pre></div>
+</div>
+<div id="masking-data-using-land-cover-maps" class="section level2">
+<h2>Masking data using land cover maps</h2>
+<p>Vegetation is the fuel for fire. In order to carry out an accurate estimation of fire danger worldwide it is important to use an homogeneous classification of land use and vegetation. The Global Wildfire Information System (GWIS) uses the Global Land Cover 2000 database and regional products for Africa, Asia, and Europe [JRC2003]. This map is publicly available and can be downloaded from <a href="https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php">https://forobs.jrc.ec.europa.eu/products/glc2000/glc2000.php</a>. Another example of such a map was compiled by the European Space Agency (ESA): the <a href="http://www.esa-landcover-cci.org/">Climate Change Initiative (CCI) Land Cover Maps</a>. Other land cover maps exist and the reader is invited to download and use the one more suitable for the problem at hand.</p>
+<p>The example below shows how to mask fire danger indices using the Global Land Cover 2000 map.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="co"># Global Land Cover 2000</span></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="co"># Documentation</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a><span class="co"># https://forobs.jrc.ec.europa.eu/data/products/glc2000/GLC2000_EUR_20849EN.pdf</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a><span class="co"># Get map</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a><span class="co"># system(&quot;wget https://forobs.jrc.ec.europa.eu/data/products/glc2000/glc2000_v1_1_Grid.zip&quot;)</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="co"># Unzip the folder in the working directory</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a></span>
+<span id="cb7-8"><a href="#cb7-8"></a><span class="co"># Load map</span></span>
+<span id="cb7-9"><a href="#cb7-9"></a>fuel &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">raster</span>(<span class="st">&quot;~/repos/caliver_extras/data/Grid/glc2000_v1_1/w001001.adf&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10"></a><span class="co"># Save legend in data.frame</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>df &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">levels</span>(fuel))</span>
+<span id="cb7-12"><a href="#cb7-12"></a></span>
+<span id="cb7-13"><a href="#cb7-13"></a><span class="co"># If fuel and fwi have different extent and/or number of rows/cols, you will need to resample</span></span>
+<span id="cb7-14"><a href="#cb7-14"></a>fuel &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">resample</span>(fuel, fwi, <span class="dt">method =</span> <span class="st">&quot;ngb&quot;</span>, <span class="dt">progress =</span> <span class="st">&quot;text&quot;</span>)</span>
+<span id="cb7-15"><a href="#cb7-15"></a></span>
+<span id="cb7-16"><a href="#cb7-16"></a><span class="co"># Remove Bare Areas (19), Water Bodies (20), Snow and Ice (21), Artificial surfaces and associated areas (22), No data (23).</span></span>
+<span id="cb7-17"><a href="#cb7-17"></a>codes_to_exclude &lt;-<span class="st"> </span><span class="dv">19</span><span class="op">:</span><span class="dv">23</span></span>
+<span id="cb7-18"><a href="#cb7-18"></a>fuel[fuel <span class="op">%in%</span><span class="st"> </span>codes_to_exclude] &lt;-<span class="st"> </span><span class="ot">NA</span></span>
+<span id="cb7-19"><a href="#cb7-19"></a><span class="kw">levels</span>(fuel) &lt;-<span class="st"> </span>df[<span class="dv">1</span><span class="op">:</span><span class="dv">18</span>,]</span>
+<span id="cb7-20"><a href="#cb7-20"></a></span>
+<span id="cb7-21"><a href="#cb7-21"></a><span class="co"># Finaly, mask the first layer in fwi</span></span>
+<span id="cb7-22"><a href="#cb7-22"></a>fwi_masked &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">mask</span>(fwi[[<span class="dv">1</span>]], fuel)</span>
+<span id="cb7-23"><a href="#cb7-23"></a><span class="kw">plot</span>(fwi_masked, <span class="dt">col =</span> <span class="kw">terrain.colors</span>(<span class="dv">120</span>))</span></code></pre></div>
+</div>
+</div>
+<div id="package-functionalities" class="section level1">
+<h1>Package functionalities</h1>
+<p>The primary goal of the <code>caliver</code> package is to streamline the post-processing of GEFF model outputs and make the scientific workflow easily reproducible. For this reason, this section provides example applications in the form of short workflows. These are ordered chronologically, based on the sequential steps a modeller would perform to visually explore information, calibrate fire danger levels and validate them. This often results in an increasing level of complexity. To provide a concise description, each workflow is not a stand alone exercise but the result of one workflow is often used as input in the following ones.</p>
+<div id="mask-crop-and-subset" class="section level2">
+<h2>Mask, crop and subset</h2>
+<p>GEFF fire danger indices are characterized by three dimensions (latitude, longitude and time) and a variable for each index of interest. These can be masked and cropped to match a user-defined extent, this can be a geographical bounding box or a spatial polygon such as a given administrative boundary. The indices can also be subsetted over the layer index or the time dimension (e.g. to take into account only fire seasons). The function <code>mask_crop_subset()</code> wraps the functions <code>raster::mask()</code>, <code>raster::crop()</code> and <code>raster::subset()</code> and converts the result into a RasterLayer (single layer) or RasterBrick (multiple layers). The example below shows how to mask and crop the fwi brick over Italy, selecting only the reference period 1981-2010.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="co"># Get indices for climatological reference period 1981-2010</span></span>
+<span id="cb8-2"><a href="#cb8-2"></a>idx &lt;-<span class="st"> </span><span class="kw">which</span>(<span class="kw">substr</span>(<span class="dt">x =</span> <span class="kw">names</span>(fwi), <span class="dt">start =</span> <span class="dv">2</span>, <span class="dt">stop =</span> <span class="dv">5</span>) <span class="op">%in%</span><span class="st"> </span><span class="dv">1981</span><span class="op">:</span><span class="dv">2010</span>)</span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co"># Mask, crop and subset</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>fwi_Italy &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> fwi, <span class="dt">p =</span> Italy, <span class="dt">idx =</span> idx, <span class="dt">progress =</span> <span class="st">&quot;text&quot;</span>)</span></code></pre></div>
+</div>
+<div id="generate-daily-climatology" class="section level2">
+<h2>Generate daily climatology</h2>
+<p>In order to understand how the fire index on a given day compares with climatological values (distribution of values during the same period in the past years, typical reference period is 1981-2010) we build a daily climatology for each day of interest. This can be done with the function <code>daily_clima()</code>. The function takes as input <code>r</code> (a RasterBrick/Stack with daily fire indices over a number of years, e.g. <code>fwi_Italy</code> defined in previous examples) and a sequence of <code>dates</code>, it then extracts from <code>r</code> the period that spans 4 days before and after the given date in <code>dates</code> (total of 9 days) for all the years available in <code>r</code>. The result is a list of stacks (one stack per day of interest). If <code>dates</code> are undefined, the function will assume all the days in a leap year are needed.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="co"># Calculate the daily climatology for the period 10-20 August</span></span>
+<span id="cb9-2"><a href="#cb9-2"></a>clima_Italy &lt;-<span class="st"> </span><span class="kw">daily_clima</span>(<span class="dt">r =</span> fwi_Italy,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                           <span class="dt">dates =</span> <span class="kw">seq.Date</span>(<span class="dt">from =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2020-08-10&quot;</span>),</span>
+<span id="cb9-4"><a href="#cb9-4"></a>                                            <span class="dt">to =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2020-08-20&quot;</span>),</span>
+<span id="cb9-5"><a href="#cb9-5"></a>                                            <span class="dt">by =</span> <span class="st">&quot;day&quot;</span>))</span></code></pre></div>
+<p>Please note that in <code>dates</code> the year is ignored!</p>
+</div>
+<div id="generate-maps-of-percentiles" class="section level2">
+<h2>Generate maps of percentiles</h2>
+<p>For each index, calculating relevant quantiles cell by cell (over time) gives an indication of the local distribution of fire danger values. There are two common approaches to derive percentile maps for fire indices: * Approach A - the percentile is calculated over the full record available over a number of years, or during the fire season over a number of years. * Approach B - the percentile is calculated on the daily climatology. In both cases such a map can be generated using the function <code>get_percentile_map()</code>.</p>
+<div id="approach-a-percentile-over-full-record" class="section level3">
+<h3>Approach A: percentile over full record</h3>
+<p>The example below uses the <code>fwi_Italy</code> (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>mapsA &lt;-<span class="st"> </span><span class="kw">get_percentile_map</span>(<span class="dt">r =</span> fwi_Italy, <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">0.90</span>))</span></code></pre></div>
+<p>With this approach, the object <code>mapsA</code> is a RasterLayer (for one probability) or a RasterBrick (for more than one probability).</p>
+</div>
+<div id="approach-b-percentile-over-daily-climatology" class="section level3">
+<h3>Approach B: percentile over daily climatology</h3>
+<p>The example below uses the <code>clima_Italy</code> (generated in a previous section) to produce three maps, corresponding to the 50th, 75th and 90th percentile respectively.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>mapsB &lt;-<span class="st"> </span><span class="kw">get_percentile_map</span>(<span class="dt">r =</span> clima_Italy, <span class="dt">probs =</span> <span class="kw">c</span>(<span class="fl">0.50</span>, <span class="fl">0.75</span>, <span class="fl">0.90</span>))</span></code></pre></div>
+<p>With this approach, the object <code>mapsB</code> is a list of RasterLayers (for one probability) or a RasterBricks (for more than one probability). The elements of the lists are named after the related date.</p>
+</div>
+</div>
+<div id="plot-percentile-maps" class="section level2">
+<h2>Plot percentile maps</h2>
+<p>Once percentile maps are generated, these can be conviniently plotted with the raster/caliver packages. The raster package provides convenient methods to plot many types of GIS layers. The caliver package builds upon these functionalities to generate pre-styled plots. The previously generated percentile maps could be visualised using the raster::plot method but the map would need to be further manipulated to overlay a background map and set the color scale to the same range so that multiple maps become comparable. The caliver function <code>plot_percentile_map()</code> performs these manipulations behind the scenes, incorporating a background map and placing multiple plots in a grid-like layout with the same color scale. In the example below we compare direct outputs using <code>raster::plot()</code> (top) versus <code>plot_percentile_map()</code> (bottom).</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a><span class="co"># Use the raster plot method</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a>raster<span class="op">::</span><span class="kw">plot</span>(mapsA, <span class="dt">main =</span> <span class="kw">c</span>(<span class="st">&quot;FWI 50th perc.&quot;</span>, <span class="st">&quot;FWI 75th perc.&quot;</span>, <span class="st">&quot;FWI 90th perc.&quot;</span>))</span>
+<span id="cb12-3"><a href="#cb12-3"></a></span>
+<span id="cb12-4"><a href="#cb12-4"></a><span class="co"># Use the caliver plot_percentile_map function</span></span>
+<span id="cb12-5"><a href="#cb12-5"></a><span class="kw">plot_percentile_map</span>(<span class="dt">maps =</span> mapsA,</span>
+<span id="cb12-6"><a href="#cb12-6"></a>                    <span class="dt">main =</span> <span class="kw">c</span>(<span class="st">&quot;FWI 50th perc.&quot;</span>, <span class="st">&quot;FWI 75th perc.&quot;</span>, <span class="st">&quot;FWI 90th perc.&quot;</span>))</span></code></pre></div>
+</div>
+<div id="classify-fire-danger-indices" class="section level2">
+<h2>Classify fire danger indices</h2>
+<p>Given a raster containing a fire danger index, e.g. fwi, this can be transformed from a continuous rating to a categorical raster using <code>classify_index()</code> (which is a wrapper around raster::cut() with some default settings).</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>fwi_class &lt;-<span class="st"> </span><span class="kw">classify_index</span>(fwi_masked, <span class="dt">index =</span> <span class="st">&quot;fwi&quot;</span>, <span class="dt">thresholds =</span> <span class="ot">NULL</span>, <span class="dt">labels =</span> <span class="ot">NULL</span>)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>rasterVis<span class="op">::</span><span class="kw">levelplot</span>(fwi_class, <span class="dt">col.regions =</span> caliver<span class="op">:::</span>effis_palette, <span class="dt">att =</span> <span class="st">&quot;Class&quot;</span>)</span></code></pre></div>
+<p>The categories of GEFF’s indices are pre-defined but can be overwritten by explicitly defining the input parameters <code>thresholds</code> and <code>labels</code>. The <code>effis_palette</code> is pre-defined in caliver, however, any custom palette can be used.</p>
+</div>
+<div id="fire-danger-levels." class="section level2">
+<h2>Fire danger levels.</h2>
+<p>Raw values of fire indices are expressed as a continuous rating (e.g. FWI values are in the range [0, +Inf[, although very rarely above 100). In order to aid decision makers raw values are routinely converted into danger classes, based on predefined thresholds.</p>
+<p>The European Forest Fire Information System (EFFIS) provides a set of fire danger thresholds/classes harmonized across Europe (<a href="https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast" class="uri">https://effis.jrc.ec.europa.eu/about-effis/technical-background/fire-danger-forecast</a>). For instance, the FWI ranges are (upper bound excluded): * Very low = 0 - 5.2 * Low = 5.2 - 11.2 * Moderate = 11.2 - 21.3 * High = 21.3 - 38.0 * Very high = 38.0 - 50.0 * Extreme &gt; 50.0</p>
+<p>In our experience, the above thresholds are particularly suited to assess fire danger in southern Europe, e.g. in the Mediterranean Region. Some countries, tend to calibrate these thresholds depending on local vegetation characteristics and fire regimes. This require local knowledge and/or experimentation. The caliver package provides some useful functionalities for this type of tasks.</p>
+<p>The fire season is the period of the year during which 80% of wildfires have occurred. For historical analysis, this is defined <em>a posteriori</em> and changes year-on-year. However, a more simplistic approach assumes that the fire season is the period of the year in which <strong>wildfires are more likely to occur</strong> (this is also the assumption made by EFFIS). Therefore it often coincides with the dry season, a period in which there is a reduced soil moisture and precipitation. In this work we adopt a convention: the fire season falls between 1st April and 31st October in the northern hemisphere, and between 1st October and 30th April in the southern hemisphere. This convention is coded in the function <code>get_fire_season()</code>, which accepts at least two arguments: dates (the sequence of daily dates for which reanalysis data is available) and zone (which can be either ‘north’ or ‘south’ hemisphere). There are also two optional arguments that allow to define an ad-hoc fire season: fss (which stands for Fire Season Start) and fse (which stands for Fire Season End).</p>
+<p>In order to calculate the danger classes, the FWI brick should be loaded and the indices corresponding to the local fire season should be identified. In the example below the fire season is assumed constant across Europe (and Italy in particular), starting in April and ending in October each year.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>dataDates &lt;-<span class="st"> </span><span class="kw">as.Date</span>(<span class="kw">substr</span>(<span class="kw">names</span>(fwi), <span class="dv">2</span>, <span class="dv">11</span>), <span class="dt">format =</span> <span class="st">&quot;%Y.%m.%d&quot;</span>)</span>
+<span id="cb14-2"><a href="#cb14-2"></a><span class="co"># Define a function to extract fire seasons in Europe</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>seasons &lt;-<span class="st"> </span><span class="kw">get_fire_season</span>(<span class="dt">dates =</span> dataDates, <span class="dt">zone =</span> <span class="st">&quot;north&quot;</span>)</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a><span class="co"># Create an index of fire season dates</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>fireSeasonIndex &lt;-<span class="st"> </span><span class="kw">which</span>(seasons <span class="op">==</span><span class="st"> </span><span class="ot">TRUE</span>)</span></code></pre></div>
+<p>Threshold for every area of interest are calculate on the subset of the FWI brick related to the fire season only and cropped over the area of interest. Below are examples calculated for various countries in Europe. <span class="citation">(Vitolo, Di Giuseppe, and D’Andrea 2018)</span> show that fire danger classes is generally correlated to the local climate and spatial variability appears to be meaningful up to regional level.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a><span class="co"># Mask/Crop/Subset FWI over Europe</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>fwi_euro &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> fwi, <span class="dt">p =</span> Europe, <span class="dt">idx =</span> fireSeasonIndex)</span>
+<span id="cb15-3"><a href="#cb15-3"></a></span>
+<span id="cb15-4"><a href="#cb15-4"></a><span class="co"># Calculate homogenised fire danger levels (or thresholds) for Europe</span></span>
+<span id="cb15-5"><a href="#cb15-5"></a>EuropeThr &lt;-<span class="st"> </span><span class="kw">get_fire_danger_levels</span>(<span class="dt">fire_index =</span> fwi_euro)</span>
+<span id="cb15-6"><a href="#cb15-6"></a>EuropeThr</span></code></pre></div>
+<p>Please note the differences between these danger levels and those recommended by EFFIS, <code>caliver</code> danger levels are generally lower than EFFIS ones.</p>
+<p>Fire danger levels are more useful when calculated at country level. Below is shown how to execute the same steps above recursively for most countries in Europe and bind the results together in a summary table.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a><span class="co"># Country level: use a loop to calculate levels for three sample countries.</span></span>
+<span id="cb16-2"><a href="#cb16-2"></a><span class="co"># Please note that in the original paper many more countries were used, here we process</span></span>
+<span id="cb16-3"><a href="#cb16-3"></a><span class="co"># only three to reduce the processing time but the procedure is exactly the same.</span></span>
+<span id="cb16-4"><a href="#cb16-4"></a>EUcountries &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Spain&quot;</span>, <span class="st">&quot;GBR&quot;</span>, <span class="st">&quot;Italy&quot;</span>)</span>
+<span id="cb16-5"><a href="#cb16-5"></a></span>
+<span id="cb16-6"><a href="#cb16-6"></a><span class="cf">for</span> (country <span class="cf">in</span> EUcountries){</span>
+<span id="cb16-7"><a href="#cb16-7"></a></span>
+<span id="cb16-8"><a href="#cb16-8"></a>  <span class="kw">print</span>(country)</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  country_poly &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">getData</span>(<span class="dt">name =</span> <span class="st">&quot;GADM&quot;</span>,</span>
+<span id="cb16-10"><a href="#cb16-10"></a>                                  <span class="dt">country =</span> country,</span>
+<span id="cb16-11"><a href="#cb16-11"></a>                                  <span class="dt">level =</span> <span class="dv">0</span>)</span>
+<span id="cb16-12"><a href="#cb16-12"></a></span>
+<span id="cb16-13"><a href="#cb16-13"></a>  <span class="co"># Mask/Crop/Subset FWI and generate thresholds for country</span></span>
+<span id="cb16-14"><a href="#cb16-14"></a>  country_fwi &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> fwi_euro, <span class="dt">p =</span> country_poly)</span>
+<span id="cb16-15"><a href="#cb16-15"></a>  country_thrs &lt;-<span class="st"> </span><span class="kw">get_fire_danger_levels</span>(<span class="dt">fire_index =</span> country_fwi)</span>
+<span id="cb16-16"><a href="#cb16-16"></a>  </span>
+<span id="cb16-17"><a href="#cb16-17"></a>  <span class="co"># Append values to data.frame</span></span>
+<span id="cb16-18"><a href="#cb16-18"></a>  <span class="cf">if</span> (country <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>) {</span>
+<span id="cb16-19"><a href="#cb16-19"></a>    df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(country_thrs, <span class="dt">nrow =</span> <span class="dv">1</span>))</span>
+<span id="cb16-20"><a href="#cb16-20"></a>  }<span class="cf">else</span>{</span>
+<span id="cb16-21"><a href="#cb16-21"></a>    df &lt;-<span class="st"> </span><span class="kw">rbind</span>(df, country_thrs)</span>
+<span id="cb16-22"><a href="#cb16-22"></a>  }</span>
+<span id="cb16-23"><a href="#cb16-23"></a>  </span>
+<span id="cb16-24"><a href="#cb16-24"></a>  <span class="kw">print</span>(df)</span>
+<span id="cb16-25"><a href="#cb16-25"></a></span>
+<span id="cb16-26"><a href="#cb16-26"></a>}</span>
+<span id="cb16-27"><a href="#cb16-27"></a></span>
+<span id="cb16-28"><a href="#cb16-28"></a>df_thr &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">cbind</span>(EUcountries, df, <span class="dt">stringsAsFactors=</span><span class="ot">FALSE</span>))</span>
+<span id="cb16-29"><a href="#cb16-29"></a><span class="kw">names</span>(df_thr) &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Country&quot;</span>, <span class="st">&quot;Low&quot;</span>, <span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;High&quot;</span>, <span class="st">&quot;VeryHigh&quot;</span>, <span class="st">&quot;Extreme&quot;</span>)</span></code></pre></div>
+<p>Assessing the danger levels at regional and province level (using the ERA-Interim based dataset) is rather difficult because some areas are too small compared to the raster resolution. For assessing fire danger in small regions we suggest to use the ERA5-based fire indices <span class="citation">(Vitolo et al. 2020)</span>.</p>
+<div id="plot-density-with-thresholds" class="section level3">
+<h3>Plot density with thresholds</h3>
+<p>The thresholds are different from the percentiles, the PDF below shows a comparison for Italy (the last country in the above loop).</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>countryPDF &lt;-<span class="st"> </span><span class="kw">plot_pdf</span>(<span class="dt">fire_index =</span> country_fwi,</span>
+<span id="cb17-2"><a href="#cb17-2"></a>                       <span class="dt">thresholds =</span> country_thrs, </span>
+<span id="cb17-3"><a href="#cb17-3"></a>                       <span class="dt">upper_limit =</span> <span class="dv">60</span>)</span></code></pre></div>
+</div>
+<div id="validate-danger-levels" class="section level3">
+<h3>Validate danger levels</h3>
+<p>Test whether large fires correspond to FWI above high danger.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="kw">library</span>(<span class="st">&quot;pROC&quot;</span>)</span>
+<span id="cb18-2"><a href="#cb18-2"></a></span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="co"># Assuming burned areas was downloaded and combined in a grid file,</span></span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="co"># this can be loaded as a brick:</span></span>
+<span id="cb18-5"><a href="#cb18-5"></a>BurnedAreas &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">brick</span>(<span class="st">&quot;GFED4_BurnedAreas/BurnedArea.grd&quot;</span>)</span>
+<span id="cb18-6"><a href="#cb18-6"></a></span>
+<span id="cb18-7"><a href="#cb18-7"></a><span class="co"># Mask and crop burned areas over Europe</span></span>
+<span id="cb18-8"><a href="#cb18-8"></a>BA &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> BurnedAreas, <span class="dt">p =</span> Europe)</span>
+<span id="cb18-9"><a href="#cb18-9"></a></span>
+<span id="cb18-10"><a href="#cb18-10"></a><span class="co"># If observations layers have no date, assign it!</span></span>
+<span id="cb18-11"><a href="#cb18-11"></a>dataDates &lt;-<span class="st"> </span><span class="kw">seq.Date</span>(<span class="dt">from =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2003-01-01&quot;</span>),</span>
+<span id="cb18-12"><a href="#cb18-12"></a>                      <span class="dt">to =</span> <span class="kw">as.Date</span>(<span class="st">&quot;2015-12-31&quot;</span>), <span class="dt">by =</span> <span class="st">&quot;day&quot;</span>)</span>
+<span id="cb18-13"><a href="#cb18-13"></a><span class="kw">names</span>(BA) &lt;-<span class="st"> </span>dataDates</span>
+<span id="cb18-14"><a href="#cb18-14"></a></span>
+<span id="cb18-15"><a href="#cb18-15"></a>EuroThrHigh &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(df_thr[df_thr<span class="op">$</span>Country <span class="op">==</span><span class="st"> &quot;Europe&quot;</span>, <span class="dv">4</span>])</span>
+<span id="cb18-16"><a href="#cb18-16"></a></span>
+<span id="cb18-17"><a href="#cb18-17"></a><span class="co"># The above can be saved and re-loaded as follows:</span></span>
+<span id="cb18-18"><a href="#cb18-18"></a>raster<span class="op">::</span><span class="kw">writeRaster</span>(BA, <span class="dt">filename=</span><span class="st">&quot;BurnedAreaEurope.grd&quot;</span>,</span>
+<span id="cb18-19"><a href="#cb18-19"></a>                    <span class="dt">bandorder=</span><span class="st">&#39;BIL&#39;</span>, <span class="dt">overwrite=</span><span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="st">&#39;text&#39;</span>)</span>
+<span id="cb18-20"><a href="#cb18-20"></a>BurnedAreaEurope &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">brick</span>(<span class="st">&quot;BurnedAreaEurope.grd&quot;</span>)</span>
+<span id="cb18-21"><a href="#cb18-21"></a></span>
+<span id="cb18-22"><a href="#cb18-22"></a><span class="co"># For the validation we do not want to subset over the fire season, subset to match days in BurnedAreaEurope</span></span>
+<span id="cb18-23"><a href="#cb18-23"></a>FWIEURO &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> FWI, <span class="dt">p =</span> Europe, <span class="dt">idx =</span> <span class="kw">which</span>(<span class="kw">names</span>(FWI) <span class="op">%in%</span><span class="st"> </span><span class="kw">names</span>(BurnedAreaEurope)))</span>
+<span id="cb18-24"><a href="#cb18-24"></a><span class="co"># The above can be saved and re-loaded as follows:</span></span>
+<span id="cb18-25"><a href="#cb18-25"></a>raster<span class="op">::</span><span class="kw">writeRaster</span>(FWIEURO, <span class="dt">filename=</span><span class="st">&quot;FWIEURO.grd&quot;</span>, <span class="dt">bandorder=</span><span class="st">&#39;BIL&#39;</span>, <span class="dt">overwrite=</span><span class="ot">TRUE</span>, <span class="dt">progress =</span> <span class="st">&#39;text&#39;</span>)</span>
+<span id="cb18-26"><a href="#cb18-26"></a>FWIEURO &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">brick</span>(<span class="st">&quot;FWIEURO.grd&quot;</span>)</span>
+<span id="cb18-27"><a href="#cb18-27"></a></span>
+<span id="cb18-28"><a href="#cb18-28"></a><span class="co"># Contingency table for JRC - Europe as a whole</span></span>
+<span id="cb18-29"><a href="#cb18-29"></a>x1 &lt;-<span class="st"> </span><span class="kw">validate_fire_danger_levels</span>(<span class="dt">fire_index =</span> FWIEURO, <span class="dt">observation =</span> BurnedAreaEurope,</span>
+<span id="cb18-30"><a href="#cb18-30"></a>                                 <span class="dt">fire_threshold =</span> <span class="fl">21.3</span>, <span class="dt">obs_threshold =</span> <span class="dv">50</span>)</span>
+<span id="cb18-31"><a href="#cb18-31"></a>tab_x &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="dt">pred =</span> x1<span class="op">$</span>pred, <span class="dt">obs =</span> x1<span class="op">$</span>obs)</span>
+<span id="cb18-32"><a href="#cb18-32"></a>hits &lt;-<span class="st"> </span>tab_x[<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb18-33"><a href="#cb18-33"></a>misses &lt;-<span class="st"> </span>tab_x[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb18-34"><a href="#cb18-34"></a>correct_negatives &lt;-<span class="st"> </span>tab_x[<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb18-35"><a href="#cb18-35"></a>false_alarms &lt;-<span class="st"> </span>tab_x[<span class="dv">2</span>,<span class="dv">1</span>]</span>
+<span id="cb18-36"><a href="#cb18-36"></a><span class="co"># POD 47%</span></span>
+<span id="cb18-37"><a href="#cb18-37"></a><span class="kw">round</span>(hits<span class="op">/</span>(hits<span class="op">+</span>misses),<span class="dv">2</span>)<span class="op">*</span><span class="dv">100</span></span>
+<span id="cb18-38"><a href="#cb18-38"></a>roc1 &lt;-<span class="st"> </span>pROC<span class="op">::</span><span class="kw">roc</span>(<span class="dt">response =</span> x1<span class="op">$</span>obs, <span class="dt">predictor =</span> x1<span class="op">$</span>pred)</span>
+<span id="cb18-39"><a href="#cb18-39"></a>pROC<span class="op">::</span><span class="kw">plot.roc</span>(roc1, <span class="dt">print.auc =</span> pROC<span class="op">::</span><span class="kw">auc</span>(roc1), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.9</span>)</span>
+<span id="cb18-40"><a href="#cb18-40"></a></span>
+<span id="cb18-41"><a href="#cb18-41"></a><span class="co"># Contingency table for caliver - Europe as a whole</span></span>
+<span id="cb18-42"><a href="#cb18-42"></a>x2 &lt;-<span class="st"> </span><span class="kw">validate_fire_danger_levels</span>(<span class="dt">fire_index =</span> FWIEURO, <span class="dt">observation =</span> BurnedAreaEurope,</span>
+<span id="cb18-43"><a href="#cb18-43"></a>                                 <span class="dt">fire_threshold =</span> EuroThrHigh, <span class="dt">obs_threshold =</span> <span class="dv">50</span>)</span>
+<span id="cb18-44"><a href="#cb18-44"></a>tab_x &lt;-<span class="st"> </span><span class="kw">table</span>(<span class="dt">pred =</span> x2<span class="op">$</span>pred, <span class="dt">obs =</span> x2<span class="op">$</span>obs)</span>
+<span id="cb18-45"><a href="#cb18-45"></a>hits &lt;-<span class="st"> </span>tab_x[<span class="dv">2</span>,<span class="dv">2</span>]</span>
+<span id="cb18-46"><a href="#cb18-46"></a>misses &lt;-<span class="st"> </span>tab_x[<span class="dv">1</span>,<span class="dv">2</span>]</span>
+<span id="cb18-47"><a href="#cb18-47"></a><span class="co"># POD 65%</span></span>
+<span id="cb18-48"><a href="#cb18-48"></a><span class="kw">round</span>(hits<span class="op">/</span>(hits<span class="op">+</span>misses),<span class="dv">2</span>)<span class="op">*</span><span class="dv">100</span></span>
+<span id="cb18-49"><a href="#cb18-49"></a>roc2 &lt;-<span class="st"> </span>pROC<span class="op">::</span><span class="kw">roc</span>(<span class="dt">response =</span> x2<span class="op">$</span>obs, <span class="dt">predictor =</span> x2<span class="op">$</span>pred)</span>
+<span id="cb18-50"><a href="#cb18-50"></a>pROC<span class="op">::</span><span class="kw">plot.roc</span>(roc2, <span class="dt">col =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">add =</span> <span class="ot">TRUE</span>,</span>
+<span id="cb18-51"><a href="#cb18-51"></a>               <span class="dt">print.auc =</span> pROC<span class="op">::</span><span class="kw">auc</span>(roc2), <span class="dt">print.auc.x =</span> <span class="dv">0</span>, <span class="dt">print.auc.y =</span> <span class="fl">0.95</span>,</span>
+<span id="cb18-52"><a href="#cb18-52"></a>               <span class="dt">print.auc.col =</span> <span class="st">&quot;red&quot;</span>)</span>
+<span id="cb18-53"><a href="#cb18-53"></a></span>
+<span id="cb18-54"><a href="#cb18-54"></a><span class="co"># Loop throught the countries</span></span>
+<span id="cb18-55"><a href="#cb18-55"></a><span class="cf">for</span> (country <span class="cf">in</span> df_thr[,<span class="st">&quot;Country&quot;</span>]){</span>
+<span id="cb18-56"><a href="#cb18-56"></a></span>
+<span id="cb18-57"><a href="#cb18-57"></a>  <span class="kw">print</span>(country)</span>
+<span id="cb18-58"><a href="#cb18-58"></a></span>
+<span id="cb18-59"><a href="#cb18-59"></a>  countryPoly &lt;-<span class="st"> </span>raster<span class="op">::</span><span class="kw">getData</span>(<span class="dt">name =</span> <span class="st">&quot;GADM&quot;</span>, <span class="dt">country =</span> country, <span class="dt">level =</span> <span class="dv">0</span>)</span>
+<span id="cb18-60"><a href="#cb18-60"></a>  countryThr &lt;-<span class="st"> </span><span class="kw">as.numeric</span>(df_thr[df_thr<span class="op">$</span>Country <span class="op">==</span><span class="st"> </span>country, <span class="dv">4</span>])</span>
+<span id="cb18-61"><a href="#cb18-61"></a></span>
+<span id="cb18-62"><a href="#cb18-62"></a>  <span class="co"># Crop RasterBricks over country of interest</span></span>
+<span id="cb18-63"><a href="#cb18-63"></a>  BA_country &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> BurnedAreaEurope, <span class="dt">p =</span> countryPoly)</span>
+<span id="cb18-64"><a href="#cb18-64"></a>  FWI_country &lt;-<span class="st"> </span><span class="kw">mask_crop_subset</span>(<span class="dt">r =</span> FWIEURO, <span class="dt">p =</span> countryPoly)</span>
+<span id="cb18-65"><a href="#cb18-65"></a></span>
+<span id="cb18-66"><a href="#cb18-66"></a>  JRC &lt;-<span class="st"> </span><span class="kw">validate_fire_danger_levels</span>(<span class="dt">fire_index =</span> FWI_country,</span>
+<span id="cb18-67"><a href="#cb18-67"></a>                                     <span class="dt">observation =</span> BA_country,</span>
+<span id="cb18-68"><a href="#cb18-68"></a>                                     <span class="dt">fire_threshold =</span> <span class="fl">21.3</span>,</span>
+<span id="cb18-69"><a href="#cb18-69"></a>                                     <span class="dt">obs_threshold =</span> <span class="dv">50</span>)</span>
+<span id="cb18-70"><a href="#cb18-70"></a>  tab_JRC &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">table</span>(JRC<span class="op">$</span>pred, JRC<span class="op">$</span>obs))</span>
+<span id="cb18-71"><a href="#cb18-71"></a>  caliver1 &lt;-<span class="st"> </span><span class="kw">validate_fire_danger_levels</span>(<span class="dt">fire_index =</span> FWI_country,</span>
+<span id="cb18-72"><a href="#cb18-72"></a>                                          <span class="dt">observation =</span> BA_country,</span>
+<span id="cb18-73"><a href="#cb18-73"></a>                                          <span class="dt">fire_threshold =</span> EuroThrHigh,</span>
+<span id="cb18-74"><a href="#cb18-74"></a>                                          <span class="dt">obs_threshold =</span> <span class="dv">50</span>)</span>
+<span id="cb18-75"><a href="#cb18-75"></a>  tab_caliver1 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">table</span>(caliver1<span class="op">$</span>pred, caliver1<span class="op">$</span>obs))</span>
+<span id="cb18-76"><a href="#cb18-76"></a>  caliver2 &lt;-<span class="st"> </span><span class="kw">validate_fire_danger_levels</span>(<span class="dt">fire_index =</span> FWI_country,</span>
+<span id="cb18-77"><a href="#cb18-77"></a>                                          <span class="dt">observation =</span> BA_country,</span>
+<span id="cb18-78"><a href="#cb18-78"></a>                                          <span class="dt">fire_threshold =</span> countryThr,</span>
+<span id="cb18-79"><a href="#cb18-79"></a>                                          <span class="dt">obs_threshold =</span> <span class="dv">50</span>)</span>
+<span id="cb18-80"><a href="#cb18-80"></a>  tab_caliver2 &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">table</span>(caliver2<span class="op">$</span>pred, caliver2<span class="op">$</span>obs))</span>
+<span id="cb18-81"><a href="#cb18-81"></a>    </span>
+<span id="cb18-82"><a href="#cb18-82"></a>  <span class="cf">if</span> (country <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>) {</span>
+<span id="cb18-83"><a href="#cb18-83"></a>    df_caliver1 &lt;-<span class="st"> </span>df_caliver2 &lt;-<span class="st"> </span>df_effis &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="st">&quot;pred&quot;</span> =<span class="st"> </span>tab_caliver1<span class="op">$</span>pred, <span class="st">&quot;obs&quot;</span> =<span class="st"> </span>tab_caliver1<span class="op">$</span>obs)</span>
+<span id="cb18-84"><a href="#cb18-84"></a>    i &lt;-<span class="st"> </span><span class="dv">3</span></span>
+<span id="cb18-85"><a href="#cb18-85"></a>  }</span>
+<span id="cb18-86"><a href="#cb18-86"></a></span>
+<span id="cb18-87"><a href="#cb18-87"></a>  df_caliver1 &lt;-<span class="st"> </span><span class="kw">cbind</span>(df_caliver1, tab_caliver1<span class="op">$</span>Freq)</span>
+<span id="cb18-88"><a href="#cb18-88"></a>  <span class="kw">names</span>(df_caliver1)[i] &lt;-<span class="st"> </span>country</span>
+<span id="cb18-89"><a href="#cb18-89"></a>  df_caliver2 &lt;-<span class="st"> </span><span class="kw">cbind</span>(df_caliver2, tab_caliver2<span class="op">$</span>Freq)</span>
+<span id="cb18-90"><a href="#cb18-90"></a>  <span class="kw">names</span>(df_caliver2)[i] &lt;-<span class="st"> </span>country</span>
+<span id="cb18-91"><a href="#cb18-91"></a>  df_effis &lt;-<span class="st"> </span><span class="kw">cbind</span>(df_effis, tab_JRC<span class="op">$</span>Freq)</span>
+<span id="cb18-92"><a href="#cb18-92"></a>  <span class="kw">names</span>(df_effis)[i] &lt;-<span class="st"> </span>country</span>
+<span id="cb18-93"><a href="#cb18-93"></a>  i &lt;-<span class="st"> </span>i <span class="op">+</span><span class="st"> </span><span class="dv">1</span></span>
+<span id="cb18-94"><a href="#cb18-94"></a></span>
+<span id="cb18-95"><a href="#cb18-95"></a>  <span class="kw">rm</span>(countryPoly, countryThr, BA_country, FWI_country)</span>
+<span id="cb18-96"><a href="#cb18-96"></a></span>
+<span id="cb18-97"><a href="#cb18-97"></a>}</span>
+<span id="cb18-98"><a href="#cb18-98"></a></span>
+<span id="cb18-99"><a href="#cb18-99"></a><span class="co"># Save contingency tables</span></span>
+<span id="cb18-100"><a href="#cb18-100"></a><span class="kw">saveRDS</span>(df_caliver1, <span class="st">&quot;df_caliver1.rds&quot;</span>)</span>
+<span id="cb18-101"><a href="#cb18-101"></a><span class="kw">saveRDS</span>(df_caliver2, <span class="st">&quot;df_caliver2.rds&quot;</span>)</span>
+<span id="cb18-102"><a href="#cb18-102"></a><span class="kw">saveRDS</span>(df_effis, <span class="st">&quot;df_effis.rds&quot;</span>)</span>
+<span id="cb18-103"><a href="#cb18-103"></a></span>
+<span id="cb18-104"><a href="#cb18-104"></a><span class="co"># Europe (EFFIS danger levels)</span></span>
+<span id="cb18-105"><a href="#cb18-105"></a><span class="kw">sum</span>(df_effis[<span class="dv">4</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># hits</span></span>
+<span id="cb18-106"><a href="#cb18-106"></a><span class="kw">sum</span>(df_effis[<span class="dv">3</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># misses</span></span>
+<span id="cb18-107"><a href="#cb18-107"></a><span class="co"># Europe (averaged danger levels)</span></span>
+<span id="cb18-108"><a href="#cb18-108"></a><span class="kw">sum</span>(df_caliver1[<span class="dv">4</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># hits</span></span>
+<span id="cb18-109"><a href="#cb18-109"></a><span class="kw">sum</span>(df_caliver1[<span class="dv">3</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># misses</span></span>
+<span id="cb18-110"><a href="#cb18-110"></a><span class="co"># Europe (country-specific danger levels)</span></span>
+<span id="cb18-111"><a href="#cb18-111"></a><span class="kw">sum</span>(df_caliver2[<span class="dv">4</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># hits</span></span>
+<span id="cb18-112"><a href="#cb18-112"></a><span class="kw">sum</span>(df_caliver2[<span class="dv">3</span>,<span class="dv">3</span><span class="op">:</span><span class="dv">27</span>]) <span class="co"># misses</span></span>
+<span id="cb18-113"><a href="#cb18-113"></a></span>
+<span id="cb18-114"><a href="#cb18-114"></a><span class="co"># UK (EFFIS danger levels)</span></span>
+<span id="cb18-115"><a href="#cb18-115"></a>df_effis[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-116"><a href="#cb18-116"></a>df_effis[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-117"><a href="#cb18-117"></a><span class="co"># UK (EU averaged danger levels)</span></span>
+<span id="cb18-118"><a href="#cb18-118"></a>df_caliver1[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-119"><a href="#cb18-119"></a>df_caliver1[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-120"><a href="#cb18-120"></a><span class="co"># UK (country-specific danger levels)</span></span>
+<span id="cb18-121"><a href="#cb18-121"></a>df_caliver2[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-122"><a href="#cb18-122"></a>df_caliver2[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;United Kingdom&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-123"><a href="#cb18-123"></a>                                                   </span>
+<span id="cb18-124"><a href="#cb18-124"></a><span class="co"># Spain (EFFIS danger levels)</span></span>
+<span id="cb18-125"><a href="#cb18-125"></a>df_effis[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-126"><a href="#cb18-126"></a>df_effis[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-127"><a href="#cb18-127"></a><span class="co"># Spain (EU averaged danger levels)</span></span>
+<span id="cb18-128"><a href="#cb18-128"></a>df_caliver1[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-129"><a href="#cb18-129"></a>df_caliver1[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-130"><a href="#cb18-130"></a><span class="co"># Spain (country-specific danger levels)</span></span>
+<span id="cb18-131"><a href="#cb18-131"></a>df_caliver2[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-132"><a href="#cb18-132"></a>df_caliver2[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Spain&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-133"><a href="#cb18-133"></a>                                                   </span>
+<span id="cb18-134"><a href="#cb18-134"></a><span class="co"># Italy (EFFIS danger levels)</span></span>
+<span id="cb18-135"><a href="#cb18-135"></a>df_effis[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-136"><a href="#cb18-136"></a>df_effis[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-137"><a href="#cb18-137"></a><span class="co"># Italy (EU averaged danger levels)</span></span>
+<span id="cb18-138"><a href="#cb18-138"></a>df_caliver1[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-139"><a href="#cb18-139"></a>df_caliver1[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># misses</span></span>
+<span id="cb18-140"><a href="#cb18-140"></a><span class="co"># Italy (country-specific danger levels)</span></span>
+<span id="cb18-141"><a href="#cb18-141"></a>df_caliver2[<span class="dv">4</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># hits</span></span>
+<span id="cb18-142"><a href="#cb18-142"></a>df_caliver2[<span class="dv">3</span>, <span class="kw">which</span>(<span class="kw">names</span>(df_caliver2) <span class="op">==</span><span class="st"> &quot;Italy&quot;</span>)] <span class="co"># misses</span></span></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references">
+<div id="ref-anel2011importance">
+<p>Añel, Juan A. 2011. “The Importance of Reviewing the Code.” <em>Communications of the ACM</em> 54 (5): 40–41.</p>
+</div>
+<div id="ref-anel2017comment">
+<p>———. 2017. “Comment on ‘Most Computational Hydrology Is Not Reproducible, so Is It Really Science?’ By Christopher Hutton et Al.” <em>Water Resources Research</em> 53 (3): 2572–4.</p>
+</div>
+<div id="ref-dee2011era">
+<p>Dee, Dick P, S Mꎬ Uppala, AJ Simmons, Paul Berrisford, P Poli, S Kobayashi, U Andrae, et al. 2011. “The Era-Interim Reanalysis: Configuration and Performance of the Data Assimilation System.” <em>Quarterly Journal of the Royal Meteorological Society</em> 137 (656): 553–97.</p>
+</div>
+<div id="ref-di2016potential">
+<p>Di Giuseppe, Francesca, Florian Pappenberger, Fredrik Wetterhall, Blazej Krzeminski, Andrea Camia, Giorgio Libertá, and Jesus San Miguel. 2016. “The Potential Predictability of Fire Danger Provided by Numerical Weather Prediction.” <em>Journal of Applied Meteorology and Climatology</em> 55 (11): 2469–91.</p>
+</div>
+<div id="ref-Flannigan_etal_2009">
+<p>Flannigan, Mike D, Meg A Krawchuk, William J de Groot, B Mike Wotton, and Lynn M Gowman. 2009. “Implications of Changing Climate for Global Wildland Fire.” <em>International Journal of Wildland Fire</em> 18 (5): 483–507.</p>
+</div>
+<div id="ref-giglio2013analysis">
+<p>Giglio, Louis, James T Randerson, and Guido R Werf. 2013. “Analysis of Daily, Monthly, and Annual Burned Area Using the Fourth-Generation Global Fire Emissions Database (Gfed4).” <em>Journal of Geophysical Research: Biogeosciences</em> 118 (1): 317–28.</p>
+</div>
+<div id="ref-hersbach2020era5">
+<p>Hersbach, Hans, Bill Bell, Paul Berrisford, Shoji Hirahara, András Horányi, Joaquı́n Muñoz-Sabater, Julien Nicolas, et al. 2020. “The Era5 Global Reanalysis.” <em>Quarterly Journal of the Royal Meteorological Society</em> 146 (730): 1999–2049.</p>
+</div>
+<div id="ref-McFarlane_etal_2002">
+<p>McFarlane, Paul, H. Pearce, and John Moore. 2002. “Introduction: Forestry and Risk Management - New Zealand in a Global Context.” In, 5–19.</p>
+</div>
+<div id="ref-rcore2016r">
+<p>RCore, TEAM. 2016. “R: A Language and Environment for Statistical Computing. R Foundation for Statistical Computing, Vienna, Austria.”</p>
+</div>
+<div id="ref-rew1990netcdf">
+<p>Rew, Russ, and Glenn Davis. 1990. “NetCDF: An Interface for Scientific Data Access.” <em>IEEE Computer Graphics and Applications</em> 10 (4): 76–82.</p>
+</div>
+<div id="ref-van1987development">
+<p>Van Wagner, CE, Petawawa Forest, and others. 1987. “Development and Structure of the Canadian Forest Fireweather Index System.” In <em>Can. For. Serv., Forestry Tech. Rep</em>. Citeseer.</p>
+</div>
+<div id="ref-van1974structure">
+<p>Van Wagner, Charles Edward, and others. 1974. <em>Structure of the Canadian Forest Fire Weather Index</em>. Vol. 1333. Citeseer.</p>
+</div>
+<div id="ref-Velez2002">
+<p>Vélez, R. 2002. “Causes of Forest Fires in the Mediterranean Basin.” <em>EFI Proceedings</em>, no. No.45: 35–42.</p>
+</div>
+<div id="ref-Vitolo2020">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, Christopher Barnard, Ruth Coughlan, Jesus San-Miguel-Ayanz, Giorgio Libertá, and Blazej Krzeminski. 2020. “ERA5-Based Global Meteorological Wildfire Danger Maps.” <em>Scientific Data</em> 7 (1): 216. <a href="https://doi.org/10.1038/s41597-020-0554-z">https://doi.org/10.1038/s41597-020-0554-z</a>.</p>
+</div>
+<div id="ref-vitolo:2018">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, and Mirko D’Andrea. 2018. “Caliver: An R Package for Calibration and Verification of Forest Fire Gridded Model Outputs.” <em>PLOS ONE</em> 13 (1): 1–18. <a href="https://doi.org/10.1371/journal.pone.0189419">https://doi.org/10.1371/journal.pone.0189419</a>.</p>
+</div>
+<div id="ref-Vitolo2019">
+<p>Vitolo, Claudia, Francesca Di Giuseppe, Blazej Krzeminski, and Jesus San-Miguel-Ayanz. 2019. “A 1980–2018 Global Fire Danger Re-Analysis Dataset for the Canadian Fire Weather Indices.” <em>Scientific Data</em> 6 (1): 190032. <a href="https://doi.org/10.1038/sdata.2019.32">https://doi.org/10.1038/sdata.2019.32</a>.</p>
+</div>
+<div id="ref-warmerdam2008geospatial">
+<p>Warmerdam, Frank. 2008. “The Geospatial Data Abstraction Library.” In <em>Open Source Approaches in Spatial Data Handling</em>, 87–104. Springer.</p>
+</div>
+<div id="ref-wickham2011testthat">
+<p>Wickham, Hadley. 2011. “Testthat: Get Started with Testing.” <em>The R Journal</em> 3: 5–10. <a href="https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf">https://journal.r-project.org/archive/2011-1/RJournal_2011-1_Wickham.pdf</a>.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
